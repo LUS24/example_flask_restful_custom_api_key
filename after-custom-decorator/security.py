@@ -1,15 +1,13 @@
-from werkzeug.security import safe_str_cmp
-from models.user import UserModel
-
-from models.device import DeviceModel
 import functools
+from models.user import UserModel
+from models.device import DeviceModel
 from hmac import compare_digest
 from flask import request
 
 
 def authenticate(username, password):
     user = UserModel.find_by_username(username)
-    if user and safe_str_cmp(user.password, password):
+    if user and compare_digest(user.password, password):
         return user
 
 
@@ -22,6 +20,7 @@ def is_valid(api_key):
     device = DeviceModel.find_by_device_key(api_key)
     if device and compare_digest(device.device_key, api_key):
         return True
+
 
 def api_required(func):
     @functools.wraps(func)

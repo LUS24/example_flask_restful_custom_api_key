@@ -1,6 +1,5 @@
 from flask_restful import Resource, reqparse
-# Reqparse se va a cambiar por marshmallow
-from flask_jwt import jwt_required
+from flask_jwt import jwt_required, current_identity
 from models.device import DeviceModel
 
 
@@ -11,23 +10,19 @@ class AddDevice(Resource):
         type=str,
         required=True
         )
-    parser.add_argument(
-        'user_id',
-        type=int,
-        required=True
-        )
 
     @jwt_required()
     def post(self):
-        
         data = AddDevice.parser.parse_args()
+        name = data["device_name"]
 
         if DeviceModel.find_by_name(data["device_name"]):
-            return {'message': "A device with name '{}' already exists.".format(data["device_name"])}, 400
+            return {'message': f"A device with name '{name}' already exists."}, 400
 
-        new_device = DeviceModel(**data)
+        new_device = DeviceModel(
+            device_name=name,
+            user_id=current_identity.id
+        )
         new_device.save_to_db()
-
-        # DeviceModel.find_by_name(data["device_name"]).json(), 201
 
         return  {"api_key": new_device.device_key}, 201
