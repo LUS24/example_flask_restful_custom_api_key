@@ -64,17 +64,3 @@ class ItemList(Resource):
     def get(self):
         return {'items': list(map(lambda x: x.json(), ItemModel.query.all()))}
 
-
-class DataList(Resource):
-    def get(self):
-        arg_params = request.args.to_dict()
-
-        if 'start_time' not in arg_params and 'end_time' not in arg_params:
-            return DataModel.query.all()
-
-        start_time = arg_params['start_time'] if 'start_time' in arg_params else '1492-01-01T00:00:00'
-        end_time = arg_params['end_time'] if 'end_time' in arg_params else '3000-12-31T11:59:59'
-        
-        return {'data_points': [item.json() for item in DataModel
-                                                        .query.filter(DataModel.time>=start_time, 
-                                                                      DataModel.time<=end_time).all()]}
