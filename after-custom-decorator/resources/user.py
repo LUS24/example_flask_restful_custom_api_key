@@ -26,14 +26,3 @@ class UserRegister(Resource):
         user.save_to_db()
 
         return {"message": "User created successfully."}, 201
-
-class UserGetDevices(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument(
-        "user_name",
-        type=str,
-        required=True,
-        help="This field cannot be blank."
-    )
-
-    

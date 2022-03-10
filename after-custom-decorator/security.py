@@ -1,8 +1,8 @@
 import functools
-from models.user import UserModel
-from models.device import DeviceModel
 from hmac import compare_digest
 from flask import request
+from models.user import UserModel
+from models.device import DeviceModel
 
 
 def authenticate(username, password):
